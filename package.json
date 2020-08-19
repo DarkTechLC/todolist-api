@@ -1,0 +1,28 @@
+{
+  "name": "todolist-api",
+  "version": "0.0.1",
+  "description": "To Do List App's API",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkTechLC/todolist-api.git"
+  },
+  "author": "Luís Clício",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DarkTechLC/todolist-api/issues"
+  },
+  "homepage": "https://github.com/DarkTechLC/todolist-api#readme",
+  "dependencies": {
+    "dotenv-save": "^1.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
