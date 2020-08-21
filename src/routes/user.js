@@ -3,9 +3,9 @@ const { Router } = require('express');
 const registerUserController = require('../controllers/registerUser');
 const loginUserController = require('../controllers/loginUser');
 const logoutUserController = require('../controllers/logoutUser');
+const userProfileController = require('../controllers/userProfile');
 const addToDoController = require('../controllers/addToDo');
-const getAllToDosController = require('../controllers/getAllToDos');
-const searchToDosController = require('../controllers/searchToDos');
+const getToDosController = require('../controllers/getToDos');
 const updateToDoController = require('../controllers/updateToDo');
 const deleteToDoController = require('../controllers/deleteToDo');
 
@@ -17,14 +17,14 @@ router.post('/login', loginUserController);
 
 router.get('/logout', logoutUserController);
 
+router.get('/profile', userProfileController);
+
 router.post('/todos', addToDoController);
 
-router.get('/todos', getAllToDosController);
+router.get('/todos', getToDosController);
 
-router.get('/todos/search', searchToDosController);
+router.put('/todos/:id', updateToDoController);
 
-router.put('/todos', updateToDoController);
-
-router.delete('/todos', deleteToDoController);
+router.delete('/todos/:id', deleteToDoController);
 
 module.exports = router;
