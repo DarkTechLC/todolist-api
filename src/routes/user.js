@@ -1,13 +1,14 @@
 const { Router } = require('express');
 
-const registerUserController = require('../controllers/registerUser');
-const loginUserController = require('../controllers/loginUser');
-const logoutUserController = require('../controllers/logoutUser');
-const userProfileController = require('../controllers/userProfile');
-const addToDoController = require('../controllers/addToDo');
-const getToDosController = require('../controllers/getToDos');
-const updateToDoController = require('../controllers/updateToDo');
-const deleteToDoController = require('../controllers/deleteToDo');
+const verifyToken = require('../middlewares/verifyToken');
+const registerUserController = require('../controllers/user/registerUser');
+const loginUserController = require('../controllers/user/loginUser');
+const logoutUserController = require('../controllers/user/logoutUser');
+const userProfileController = require('../controllers/user/userProfile');
+const addToDoController = require('../controllers/user/addToDo');
+const getToDosController = require('../controllers/user/getToDos');
+const updateToDoController = require('../controllers/user/updateToDo');
+const deleteToDoController = require('../controllers/user/deleteToDo');
 
 const router = Router();
 
@@ -17,14 +18,14 @@ router.post('/login', loginUserController);
 
 router.get('/logout', logoutUserController);
 
-router.get('/profile', userProfileController);
+router.get('/profile', verifyToken, userProfileController);
 
-router.post('/todos', addToDoController);
+router.post('/todos', verifyToken, addToDoController);
 
-router.get('/todos', getToDosController);
+router.get('/todos', verifyToken, getToDosController);
 
-router.put('/todos/:id', updateToDoController);
+router.put('/todos/:id', verifyToken, updateToDoController);
 
-router.delete('/todos/:id', deleteToDoController);
+router.delete('/todos/:id', verifyToken, deleteToDoController);
 
 module.exports = router;
