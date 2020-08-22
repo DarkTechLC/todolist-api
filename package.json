@@ -20,7 +20,8 @@
   "homepage": "https://github.com/DarkTechLC/todolist-api#readme",
   "dependencies": {
     "dotenv-save": "^1.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "pg": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
