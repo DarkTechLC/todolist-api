@@ -18,14 +18,16 @@ router.post('/login', loginUserController);
 
 router.get('/logout', logoutUserController);
 
-router.get('/profile', verifyToken, userProfileController);
+router.use(verifyToken);
 
-router.post('/todos', verifyToken, addToDoController);
+router.get('/profile', userProfileController);
 
-router.get('/todos', verifyToken, getToDosController);
+router.post('/todos', addToDoController);
 
-router.put('/todos/:id', verifyToken, updateToDoController);
+router.get('/todos', getToDosController);
 
-router.delete('/todos/:id', verifyToken, deleteToDoController);
+router.put('/todos/:id', updateToDoController);
+
+router.delete('/todos/:id', deleteToDoController);
 
 module.exports = router;
