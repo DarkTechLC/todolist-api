@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
   try {
     const usernameResult = await db.query(`
       SELECT username FROM users WHERE username = '${user_name}' LIMIT 1;
-    `);
+    `, []);
 
     if (usernameResult.rows.length > 0)
       return res.status(409).json({
@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
   try {
     const emailResult = await db.query(`
       SELECT email FROM users WHERE email = '${user_email}' LIMIT 1;
-    `);
+    `, []);
 
     if (emailResult.rows.length > 0)
       return res.status(409).json({
@@ -73,25 +73,18 @@ module.exports = async (req, res) => {
     });
   }
 
-  try {
-    const user = {
-      id: generateID(),
-      username: user_name,
-      email: user_email,
-      password: await generatePasswordHash(password)
-    }
+  const user = {
+    id: generateID(),
+    username: user_name,
+    email: user_email,
+    password: await generatePasswordHash(password)
+  }
 
+  try {
     await db.query(`
       INSERT INTO users (id, username, email, password)
         VALUES ($1, $2, $3, $4);
     `, Object.values(user));
-
-    return res.status(200).json({
-      error: false,
-      auth: true,
-      token: generateTokenByTheID(user.id),
-      user_name: user.username
-    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -100,4 +93,11 @@ module.exports = async (req, res) => {
       message: 'Could not create an account.'
     });
   }
+
+  return res.status(201).json({
+    error: false,
+    auth: true,
+    token: generateTokenByTheID(user.id),
+    user_name: user.username
+  });
 }
