@@ -212,9 +212,9 @@
   }
   ```
 
-### PUT `/todos/:id`
+### PATCH `/todos/:id`
 
-- Update a to do to the authenticated user.
+- Change some data of a to do to the authenticated user.
 
 - Request example:
 
@@ -228,7 +228,6 @@
       "title": "Title 1 edited",
       "description": "To do description edited",
       "priority": 3,
-      "finished": true
     }
   }
   ```
@@ -242,8 +241,34 @@
       "title": "Title 1 edited",
       "description": "To do description edited",
       "priority": 3,
-      "finished": true,
-      "date_added": "Tue Aug 18 2020 16:15:23 GMT-0300 (Brasilia Standard Time)"
+    }
+  }
+  ```
+### PATCH `/todos/:id/finish`
+
+- Change the finish state of a to do to the authenticated user.
+
+- Request example:
+
+  ```json
+  {
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "lkda21pd121po211adspoa023kp390"
+    },
+    "body": {
+      "finished": true
+    }
+  }
+  ```
+
+- Response example:
+
+  ```json
+  {
+    "updated_todo": {
+      "id": "a0B1Z9",
+      "finished": true
     }
   }
   ```

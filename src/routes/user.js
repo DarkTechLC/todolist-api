@@ -7,7 +7,10 @@ const logoutUserController = require('../controllers/user/logoutUser');
 const userProfileController = require('../controllers/user/userProfile');
 const addToDoController = require('../controllers/user/addToDo');
 const getToDosController = require('../controllers/user/getToDos');
-const updateToDoController = require('../controllers/user/updateToDo');
+const {
+  editToDoData: editToDoDataController,
+  finishToDo: finishToDoController
+} = require('../controllers/user/updateToDo');
 const deleteToDoController = require('../controllers/user/deleteToDo');
 
 const router = Router();
@@ -26,7 +29,9 @@ router.post('/todos', addToDoController);
 
 router.get('/todos', getToDosController);
 
-router.put('/todos/:id', updateToDoController);
+router.patch('/todos/:id', editToDoDataController);
+
+router.patch('/todos/:id/finish', finishToDoController);
 
 router.delete('/todos/:id', deleteToDoController);
 
