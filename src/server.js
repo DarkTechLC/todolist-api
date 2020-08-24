@@ -26,7 +26,7 @@ const PORT = process.env.PORT;
         priority SMALLINT NOT NULL
           CHECK (priority > 0 AND priority < 4),
         finished BOOLEAN DEFAULT FALSE,
-        data_added TEXT NOT NULL,
+        date_added TEXT NOT NULL,
         PRIMARY KEY (id),
         CONSTRAINT fk_user
           FOREIGN KEY (user_id)
