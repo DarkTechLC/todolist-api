@@ -1,29 +1,103 @@
+const db = require('../../config/database');
+
 const editToDoData = async (req, res) => {
   const { title, description, priority } = req.body;
   const { id } = req.params;
 
-  return res.status(200).json({
-    error: false,
-    updated_todo: {
-      id: id,
-      title: title,
-      description: description,
-      priority: priority,
-    }
-  });
+  if (!title || !priority)
+    return res.status(400).json({
+      error: true,
+      message: 'The title and priority field cannot be empty.'
+    });
+
+  const verifyPriorityRegex = /[1-3]/;
+
+  if (!verifyPriorityRegex.test(priority))
+    return res.status(400).json({
+      error: true,
+      message: 'The priority must be a value from 1 to 3.'
+    });
+
+  try {
+    const { rows: todosRows } = await db.query(`
+      SELECT id FROM users_todos WHERE id = '${id}' LIMIT 1;
+    `, []);
+
+    if (todosRows.length === 0)
+      return res.status(404).json({
+        error: true,
+        message: 'Could not update todo: doesn\'t exist.'
+      });
+
+    await db.query(`
+      UPDATE users_todos
+      SET
+        title = '${title}',
+        description = '${description}',
+        priority = '${parseInt(priority)}'
+      WHERE id = '${id}';
+    `, []);
+
+    return res.status(200).json({
+      error: false,
+      updated_todo: {
+        id: id,
+        title: title,
+        description: description,
+        priority: priority
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: true,
+      message: 'Could not update to do.'
+    });
+  }
 }
 
 const finishToDo = async (req, res) => {
   const { finished } = req.body;
   const { id } = req.params;
 
-  return res.status(200).json({
-    error: false,
-    updated_todo: {
-      id: id,
-      finished: finished
-    }
-  });
+  if (!finished)
+    return res.status(400).json({
+      error: true,
+      message: 'The finished field cannot be empty.'
+    });
+
+  try {
+    const { rows: todosRows } = await db.query(`
+      SELECT id FROM users_todos WHERE id = '${id}' LIMIT 1;
+    `, []);
+
+    if (todosRows.length === 0)
+      return res.status(404).json({
+        error: true,
+        message: 'Could not update todo: doesn\'t exist.'
+      });
+
+    await db.query(`
+      UPDATE users_todos
+      SET
+        finished = ${finished}
+      WHERE id = '${id}';
+    `, []);
+
+    return res.status(200).json({
+      error: false,
+      updated_todo: {
+        id: id,
+        finished: finished
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: true,
+      message: 'Could not update to do.'
+    });
+  }
 }
 
 module.exports = {
