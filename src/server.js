@@ -34,12 +34,12 @@ const PORT = process.env.PORT;
             ON DELETE CASCADE
       );    
     `, []);
+
+    app.listen(PORT, () => {
+      console.log(`Server running in http://localhost:${PORT}...`);
+    });
   } catch (error) {
     console.log(error);
     process.exit(-1);
   }
-
-  app.listen(PORT, () => {
-    console.log(`Server running in http://localhost:${PORT}...`);
-  });
 })();
