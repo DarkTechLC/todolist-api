@@ -10,17 +10,17 @@ const verifyToken = (req, res, next) => {
       message: 'No token provided.',
     });
 
-  jwt.verify(token, process.env.SECRET, (err, decoded) => {
-    if (err)
-      return res.status(401).json({
-        error: true,
-        auth: false,
-        message: 'Invalid token.',
-      });
-
-    req.userId = decoded.id;
+  try {
+    const { id } = jwt.verify(token, process.env.SECRET);
+    req.userId = id;
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({
+      error: true,
+      auth: false,
+      message: 'Invalid token.',
+    });
+  }
 }
 
 module.exports = verifyToken;
