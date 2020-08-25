@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Tokens expires in 1 day by default
 const generateTokenByTheID = (id, timeToExpires = 86400) => {
-  jwt.sign(
+  return jwt.sign(
     { id },
     process.env.SECRET,
     { expiresIn: timeToExpires }
