@@ -34,11 +34,14 @@ module.exports = async (req, res) => {
     });
 
   try {
-    const usernameResult = await db.query(`
-      SELECT username FROM users WHERE username = '${user_name}' LIMIT 1;
-    `, []);
+    const { rows: usernameRows } = await db.query(`
+      SELECT username
+      FROM users
+      WHERE username = $1
+      LIMIT 1;
+    `, [user_name]);
 
-    if (usernameResult.rows.length > 0)
+    if (usernameRows.length > 0)
       return res.status(409).json({
         error: true,
         auth: false,
@@ -54,11 +57,14 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const emailResult = await db.query(`
-      SELECT email FROM users WHERE email = '${user_email}' LIMIT 1;
-    `, []);
+    const { rows: emailRows } = await db.query(`
+      SELECT email
+      FROM users
+      WHERE email = $1
+      LIMIT 1;
+    `, [user_email]);
 
-    if (emailResult.rows.length > 0)
+    if (emailRows.length > 0)
       return res.status(409).json({
         error: true,
         auth: false,
@@ -73,18 +79,26 @@ module.exports = async (req, res) => {
     });
   }
 
-  const user = {
-    id: generateID(),
-    username: user_name,
-    email: user_email,
-    password: await generatePasswordHash(password)
-  }
-
   try {
+    const user = {
+      id: generateID(),
+      username: user_name,
+      email: user_email,
+      password: await generatePasswordHash(password)
+    }
+
     await db.query(`
-      INSERT INTO users (id, username, email, password)
-        VALUES ($1, $2, $3, $4);
+      INSERT INTO users 
+        (id, username, email, password)
+      VALUES ($1, $2, $3, $4);
     `, Object.values(user));
+
+    return res.status(201).json({
+      error: false,
+      auth: true,
+      token: generateTokenByTheID(user.id),
+      user_name: user.username
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -93,11 +107,4 @@ module.exports = async (req, res) => {
       message: 'Could not create an account.'
     });
   }
-
-  return res.status(201).json({
-    error: false,
-    auth: true,
-    token: generateTokenByTheID(user.id),
-    user_name: user.username
-  });
 }
