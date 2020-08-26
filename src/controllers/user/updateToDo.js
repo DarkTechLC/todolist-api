@@ -20,8 +20,11 @@ const editToDoData = async (req, res) => {
 
   try {
     const { rows: todosRows } = await db.query(`
-      SELECT id FROM users_todos WHERE id = '${id}' LIMIT 1;
-    `, []);
+      SELECT id
+      FROM users_todos
+      WHERE id = $1
+      LIMIT 1;
+    `, [id]);
 
     if (todosRows.length === 0)
       return res.status(404).json({
@@ -32,11 +35,11 @@ const editToDoData = async (req, res) => {
     await db.query(`
       UPDATE users_todos
       SET
-        title = '${title}',
-        description = '${description}',
-        priority = '${parseInt(priority)}'
-      WHERE id = '${id}';
-    `, []);
+        title = $1,
+        description = $2,
+        priority = $3
+      WHERE id = $4;
+    `, [title, description, parseInt(priority), id]);
 
     return res.status(200).json({
       error: false,
@@ -68,8 +71,11 @@ const finishToDo = async (req, res) => {
 
   try {
     const { rows: todosRows } = await db.query(`
-      SELECT id FROM users_todos WHERE id = '${id}' LIMIT 1;
-    `, []);
+      SELECT id
+      FROM users_todos
+      WHERE id = $1
+      LIMIT 1;
+    `, [id]);
 
     if (todosRows.length === 0)
       return res.status(404).json({
@@ -80,9 +86,9 @@ const finishToDo = async (req, res) => {
     await db.query(`
       UPDATE users_todos
       SET
-        finished = ${finished}
-      WHERE id = '${id}';
-    `, []);
+        finished = $1
+      WHERE id = $2;
+    `, [finished, id]);
 
     return res.status(200).json({
       error: false,
