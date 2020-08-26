@@ -20,22 +20,30 @@ module.exports = async (req, res) => {
       message: 'The priority must be a value from 1 to 3.'
     });
 
-  const todoData = {
-    id: generateID(),
-    user_id: userId,
-    title,
-    description,
-    priority: parseInt(priority),
-    finished: false,
-    date_added: new Date()
-  }
-
   try {
+    const todoData = {
+      id: generateID(),
+      user_id: userId,
+      title: title,
+      description: description,
+      priority: parseInt(priority),
+      finished: false,
+      date_added: new Date()
+    }
+
     await db.query(`
       INSERT INTO users_todos
         (id, user_id, title, description, priority, finished, date_added)
-        VALUES ($1, $2, $3, $4, $5, $6, $7);
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7);
     `, Object.values(todoData));
+
+    const { user_id, ...todoDataWithoutUserId } = todoData;
+
+    return res.status(200).json({
+      error: false,
+      new_todo: todoDataWithoutUserId
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -43,12 +51,4 @@ module.exports = async (req, res) => {
       message: 'Could not save to do.'
     });
   }
-
-  const { user_id, ...todoDataWithoutUserId } = todoData;
-
-  return res.status(200).json({
-    error: false,
-    auth: true,
-    new_todo: todoDataWithoutUserId
-  });
 }
