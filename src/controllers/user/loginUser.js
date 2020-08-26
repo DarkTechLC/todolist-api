@@ -14,11 +14,14 @@ module.exports = async (req, res) => {
     });
 
   try {
-    const emailResult = await db.query(`
-      SELECT email FROM users WHERE email = '${user_email}' LIMIT 1;
-    `, []);
+    const { rows: emailRows } = await db.query(`
+      SELECT email
+      FROM users 
+      WHERE email = $1
+      LIMIT 1;
+    `, [user_email]);
 
-    if (emailResult.rows.length === 0)
+    if (emailRows.length === 0)
       return res.status(400).json({
         error: true,
         auth: false,
@@ -34,11 +37,14 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const passwordResult = await db.query(`
-      SELECT password FROM users WHERE email = '${user_email}' LIMIT 1;
-    `, []);
+    const { rows: [{ password: passwordResult }] } = await db.query(`
+      SELECT password
+      FROM users
+      WHERE email = $1
+      LIMIT 1;
+    `, [user_email]);
 
-    const match = await comparePassword(password, passwordResult.rows[0].password);
+    const match = await comparePassword(password, passwordResult);
 
     if (!match)
       return res.status(401).json({
@@ -55,20 +61,20 @@ module.exports = async (req, res) => {
     });
   }
 
-  const user = {
-    id: null,
-    username: null
-  }
-
   try {
-    const userResult = await db.query(`
-      SELECT id, username FROM users WHERE email = '${user_email}' LIMIT 1;
-    `, []);
+    const { rows: [{ id, username }] } = await db.query(`
+      SELECT id, username
+      FROM users
+      WHERE email = $1
+      LIMIT 1;
+    `, [user_email]);
 
-    const { id, username } = userResult.rows[0];
-
-    user.id = id;
-    user.username = username;
+    return res.status(200).json({
+      error: false,
+      auth: true,
+      token: generateTokenByTheID(id),
+      user_name: username
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -77,11 +83,4 @@ module.exports = async (req, res) => {
       message: 'Could not verify user data.'
     });
   }
-
-  return res.status(200).json({
-    error: false,
-    auth: true,
-    token: generateTokenByTheID(user.id),
-    user_name: user.username
-  });
 }
