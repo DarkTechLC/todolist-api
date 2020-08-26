@@ -4,8 +4,6 @@ module.exports = async (req, res) => {
   const { priority } = req.query;
   const { userId } = req;
 
-  let todos;
-
   try {
     const queryWithPriority = `
       SELECT
@@ -13,7 +11,8 @@ module.exports = async (req, res) => {
       FROM
         users_todos
       WHERE
-        user_id = '${userId}' AND priority = ${parseInt(priority)};
+        user_id = $1
+        AND priority = ${parseInt(priority)};
     `;
 
     const queryWithoutPriority = `
@@ -22,7 +21,7 @@ module.exports = async (req, res) => {
       FROM
         users_todos
       WHERE
-        user_id = '${userId}'
+        user_id = $1
       ORDER BY
         priority DESC;
     `;
@@ -33,9 +32,12 @@ module.exports = async (req, res) => {
         : queryWithoutPriority
       : queryWithoutPriority;
 
-    const { rows } = await db.query(query, []);
+    const { rows: todos } = await db.query(query, [userId]);
 
-    todos = rows;
+    return res.status(200).json({
+      error: false,
+      todos: todos
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -43,9 +45,4 @@ module.exports = async (req, res) => {
       message: 'Could not verify user to dos.'
     });
   }
-
-  return res.status(200).json({
-    error: false,
-    todos: todos
-  });
 }
