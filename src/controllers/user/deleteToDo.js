@@ -5,8 +5,11 @@ module.exports = async (req, res) => {
 
   try {
     const { rows: todosRows } = await db.query(`
-      SELECT id FROM users_todos WHERE id = '${id}' LIMIT 1;
-    `, []);
+      SELECT id
+      FROM users_todos
+      WHERE id = $1
+      LIMIT 1;
+    `, [id]);
 
     if (todosRows.length === 0)
       return res.status(404).json({
@@ -15,8 +18,9 @@ module.exports = async (req, res) => {
       });
 
     await db.query(`
-      DELETE FROM users_todos WHERE id = '${id}';
-    `, []);
+      DELETE FROM users_todos
+      WHERE id = $1;
+    `, [id]);
 
     return res.status(200).json({
       error: false,
