@@ -3,7 +3,7 @@ const comparePassword = require('../../utils/comparePassword');
 const generateTokenByTheID = require('../../utils/generateTokenByTheID');
 
 module.exports = async (req, res) => {
-  const { user_email, password } = req.body;
+  let { user_email, password } = req.body;
 
   // Validations
   if (!user_email || !password)
@@ -12,6 +12,8 @@ module.exports = async (req, res) => {
       auth: false,
       message: 'There can be no blank fields.'
     });
+
+  user_email = user_email.toLowerCase().trim();
 
   try {
     const { rows: emailRows } = await db.query(`

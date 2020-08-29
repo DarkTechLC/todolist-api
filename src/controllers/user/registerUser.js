@@ -4,7 +4,7 @@ const generatePasswordHash = require('../../utils/generatePasswordHash');
 const generateTokenByTheID = require('../../utils/generateTokenByTheID');
 
 module.exports = async (req, res) => {
-  const { user_name, user_email, password } = req.body;
+  let { user_name, user_email, password } = req.body;
 
   // Validations
   if (!user_name || !user_email || !password)
@@ -13,6 +13,9 @@ module.exports = async (req, res) => {
       auth: false,
       message: 'There can be no blank fields.'
     });
+
+  user_name = user_name.trim();
+  user_email = user_email.toLowerCase().trim();
 
   const verifyEmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
