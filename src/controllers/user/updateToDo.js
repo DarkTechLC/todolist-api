@@ -63,10 +63,12 @@ const finishToDo = async (req, res) => {
   const { finished } = req.body;
   const { id } = req.params;
 
-  if (!finished)
+  const verifyFinishRegex = /[true|false]/;
+
+  if (!verifyFinishRegex.test(finished))
     return res.status(400).json({
       error: true,
-      message: 'The finished field cannot be empty.'
+      message: 'Invalid finished field value.'
     });
 
   try {

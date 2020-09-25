@@ -12,7 +12,9 @@ module.exports = async (req, res) => {
         users_todos
       WHERE
         user_id = $1
-        AND priority = ${parseInt(priority)};
+        AND priority = ${parseInt(priority)}
+      ORDER BY
+        date_added DESC;
     `;
 
     const queryWithoutPriority = `
@@ -23,7 +25,7 @@ module.exports = async (req, res) => {
       WHERE
         user_id = $1
       ORDER BY
-        priority DESC;
+        date_added DESC;
     `;
 
     const query = priority
