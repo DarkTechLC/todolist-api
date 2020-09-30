@@ -60,16 +60,7 @@ const editToDoData = async (req, res) => {
 }
 
 const finishToDo = async (req, res) => {
-  const { finished } = req.body;
-  const { id } = req.params;
-
-  const verifyFinishRegex = /[true|false]/;
-
-  if (!verifyFinishRegex.test(finished))
-    return res.status(400).json({
-      error: true,
-      message: 'Invalid finished field value.'
-    });
+  const { id: todoId } = req.params;
 
   try {
     const { rows: todosRows } = await db.query(`
@@ -77,7 +68,7 @@ const finishToDo = async (req, res) => {
       FROM users_todos
       WHERE id = $1
       LIMIT 1;
-    `, [id]);
+    `, [todoId]);
 
     if (todosRows.length === 0)
       return res.status(404).json({
@@ -85,12 +76,17 @@ const finishToDo = async (req, res) => {
         message: 'Could not update todo: doesn\'t exist.'
       });
 
-    await db.query(`
+    const { rows: [{ id, finished }] } = await db.query(`
       UPDATE users_todos
-      SET
-        finished = $1
-      WHERE id = $2;
-    `, [finished, id]);
+      SET finished = NOT (
+          SELECT finished
+          FROM users_todos
+          WHERE id = $1
+          LIMIT 1
+        )
+      WHERE id = $1
+      RETURNING id, finished;
+    `, [todoId]);
 
     return res.status(200).json({
       error: false,
