@@ -9,7 +9,7 @@ const addToDoController = require('../controllers/user/addToDo');
 const getToDosController = require('../controllers/user/getToDos');
 const {
   editToDoData: editToDoDataController,
-  finishToDo: finishToDoController
+  finishToDo: finishToDoController,
 } = require('../controllers/user/updateToDo');
 const deleteToDoController = require('../controllers/user/deleteToDo');
 

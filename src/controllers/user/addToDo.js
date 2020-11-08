@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
   if (!title || !priority)
     return res.status(400).json({
       error: true,
-      message: 'The title and priority field cannot be empty.'
+      message: 'The title and priority field cannot be empty.',
     });
 
   const verifyPriorityRegex = /[1-3]/;
@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   if (!verifyPriorityRegex.test(priority))
     return res.status(400).json({
       error: true,
-      message: 'The priority must be a value from 1 to 3.'
+      message: 'The priority must be a value from 1 to 3.',
     });
 
   try {
@@ -28,27 +28,30 @@ module.exports = async (req, res) => {
       description: description,
       priority: parseInt(priority),
       finished: false,
-      date_added: new Date()
-    }
+      date_added: new Date(),
+    };
 
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO users_todos
         (id, user_id, title, description, priority, finished, date_added)
       VALUES
         ($1, $2, $3, $4, $5, $6, $7);
-    `, Object.values(todoData));
+    `,
+      Object.values(todoData)
+    );
 
     const { user_id, ...todoDataWithoutUserId } = todoData;
 
     return res.status(200).json({
       error: false,
-      new_todo: todoDataWithoutUserId
+      new_todo: todoDataWithoutUserId,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Could not save to do.'
+      message: 'Could not save to do.',
     });
   }
-}
+};

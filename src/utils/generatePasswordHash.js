@@ -8,6 +8,6 @@ const generatePasswordHash = async (plainTextPassword, saltRounds = 10) => {
     console.error(error);
     return;
   }
-}
+};
 
 module.exports = generatePasswordHash;

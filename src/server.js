@@ -7,7 +7,8 @@ const PORT = process.env.PORT;
 
 (async () => {
   try {
-    await db.query(`
+    await db.query(
+      `
       CREATE TABLE IF NOT EXISTS users (
         id VARCHAR (8),
         username VARCHAR (255) NOT NULL UNIQUE,
@@ -15,9 +16,12 @@ const PORT = process.env.PORT;
         password TEXT NOT NULL,
         PRIMARY KEY (id)
       );
-    `, []);
+    `,
+      []
+    );
 
-    await db.query(`
+    await db.query(
+      `
       CREATE TABLE IF NOT EXISTS users_todos (
         id VARCHAR (8),
         user_id VARCHAR (8) NOT NULL,
@@ -33,7 +37,9 @@ const PORT = process.env.PORT;
             REFERENCES users (id)
             ON DELETE CASCADE
       );    
-    `, []);
+    `,
+      []
+    );
 
     app.listen(PORT, () => {
       console.log(`Server running in http://localhost:${PORT}...`);

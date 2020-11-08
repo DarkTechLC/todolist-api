@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({
       error: true,
       auth: false,
-      message: 'There can be no blank fields.'
+      message: 'There can be no blank fields.',
     });
 
   user_name = user_name.trim();
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({
       error: true,
       auth: false,
-      message: 'Invalid e-mail.'
+      message: 'Invalid e-mail.',
     });
 
   const verifyPasswordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
@@ -33,52 +33,59 @@ module.exports = async (req, res) => {
     return res.status(400).json({
       error: true,
       auth: false,
-      message: 'The password must contain at least 8 characters, which are: uppercase, lowercase and numeric.'
+      message:
+        'The password must contain at least 8 characters, which are: uppercase, lowercase and numeric.',
     });
 
   try {
-    const { rows: usernameRows } = await db.query(`
+    const { rows: usernameRows } = await db.query(
+      `
       SELECT username
       FROM users
       WHERE username = $1
       LIMIT 1;
-    `, [user_name]);
+    `,
+      [user_name]
+    );
 
     if (usernameRows.length > 0)
       return res.status(409).json({
         error: true,
         auth: false,
-        message: 'Username already exists.'
+        message: 'Username already exists.',
       });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
       auth: false,
-      message: 'Could not verify username.'
+      message: 'Could not verify username.',
     });
   }
 
   try {
-    const { rows: emailRows } = await db.query(`
+    const { rows: emailRows } = await db.query(
+      `
       SELECT email
       FROM users
       WHERE email = $1
       LIMIT 1;
-    `, [user_email]);
+    `,
+      [user_email]
+    );
 
     if (emailRows.length > 0)
       return res.status(409).json({
         error: true,
         auth: false,
-        message: 'E-mail already exists.'
+        message: 'E-mail already exists.',
       });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
       auth: false,
-      message: 'Could not verify e-mail.'
+      message: 'Could not verify e-mail.',
     });
   }
 
@@ -87,27 +94,30 @@ module.exports = async (req, res) => {
       id: generateID(),
       username: user_name,
       email: user_email,
-      password: await generatePasswordHash(password)
-    }
+      password: await generatePasswordHash(password),
+    };
 
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO users 
         (id, username, email, password)
       VALUES ($1, $2, $3, $4);
-    `, Object.values(user));
+    `,
+      Object.values(user)
+    );
 
     return res.status(201).json({
       error: false,
       auth: true,
       token: generateTokenByTheID(user.id),
-      user_name: user.username
+      user_name: user.username,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
       auth: false,
-      message: 'Could not create an account.'
+      message: 'Could not create an account.',
     });
   }
-}
+};

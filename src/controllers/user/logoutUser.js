@@ -3,6 +3,6 @@ module.exports = (req, res) => {
     error: false,
     auth: false,
     token: null,
-    user_name: null
+    user_name: null,
   });
-}
+};

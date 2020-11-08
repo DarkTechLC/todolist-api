@@ -38,13 +38,13 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({
       error: false,
-      todos: todos
+      todos: todos,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Could not verify user to dos.'
+      message: 'Could not verify user to dos.',
     });
   }
-}
+};

@@ -8,6 +8,6 @@ const comparePassword = async (plainTextPassword, hash) => {
     console.error(error);
     return;
   }
-}
+};
 
 module.exports = comparePassword;

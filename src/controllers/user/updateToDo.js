@@ -7,7 +7,7 @@ const editToDoData = async (req, res) => {
   if (!title || !priority)
     return res.status(400).json({
       error: true,
-      message: 'The title and priority field cannot be empty.'
+      message: 'The title and priority field cannot be empty.',
     });
 
   const verifyPriorityRegex = /[1-3]/;
@@ -15,31 +15,37 @@ const editToDoData = async (req, res) => {
   if (!verifyPriorityRegex.test(priority))
     return res.status(400).json({
       error: true,
-      message: 'The priority must be a value from 1 to 3.'
+      message: 'The priority must be a value from 1 to 3.',
     });
 
   try {
-    const { rows: todosRows } = await db.query(`
+    const { rows: todosRows } = await db.query(
+      `
       SELECT id
       FROM users_todos
       WHERE id = $1
       LIMIT 1;
-    `, [id]);
+    `,
+      [id]
+    );
 
     if (todosRows.length === 0)
       return res.status(404).json({
         error: true,
-        message: 'Could not update todo: doesn\'t exist.'
+        message: "Could not update todo: doesn't exist.",
       });
 
-    await db.query(`
+    await db.query(
+      `
       UPDATE users_todos
       SET
         title = $1,
         description = $2,
         priority = $3
       WHERE id = $4;
-    `, [title, description, parseInt(priority), id]);
+    `,
+      [title, description, parseInt(priority), id]
+    );
 
     return res.status(200).json({
       error: false,
@@ -47,36 +53,42 @@ const editToDoData = async (req, res) => {
         id: id,
         title: title,
         description: description,
-        priority: priority
-      }
+        priority: priority,
+      },
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Could not update to do.'
+      message: 'Could not update to do.',
     });
   }
-}
+};
 
 const finishToDo = async (req, res) => {
   const { id: todoId } = req.params;
 
   try {
-    const { rows: todosRows } = await db.query(`
+    const { rows: todosRows } = await db.query(
+      `
       SELECT id
       FROM users_todos
       WHERE id = $1
       LIMIT 1;
-    `, [todoId]);
+    `,
+      [todoId]
+    );
 
     if (todosRows.length === 0)
       return res.status(404).json({
         error: true,
-        message: 'Could not update todo: doesn\'t exist.'
+        message: "Could not update todo: doesn't exist.",
       });
 
-    const { rows: [{ id, finished }] } = await db.query(`
+    const {
+      rows: [{ id, finished }],
+    } = await db.query(
+      `
       UPDATE users_todos
       SET finished = NOT (
           SELECT finished
@@ -86,25 +98,27 @@ const finishToDo = async (req, res) => {
         )
       WHERE id = $1
       RETURNING id, finished;
-    `, [todoId]);
+    `,
+      [todoId]
+    );
 
     return res.status(200).json({
       error: false,
       updated_todo: {
         id: id,
-        finished: finished
-      }
+        finished: finished,
+      },
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Could not update to do.'
+      message: 'Could not update to do.',
     });
   }
-}
+};
 
 module.exports = {
   editToDoData,
-  finishToDo
-}
+  finishToDo,
+};
